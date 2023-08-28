@@ -1,4 +1,4 @@
 .PHONY: dev
 
-dev:
+install:
 	pip install -e .

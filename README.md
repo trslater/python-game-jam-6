@@ -5,5 +5,6 @@ This is the repo for my entry to the [Python Game Jam #6](https://itch.io/jam/py
 ## Development
 
 ```
-pip install -e .
+make install
+pyjam
 ```
