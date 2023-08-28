@@ -1,7 +1,7 @@
 [project]
 name = "pyjam"
 version = "0.1.0"
-dependencies = ["arcade"]
+dependencies = ["arcade", "pyinstaller"]
 
 [project.scripts]
 pyjam = "pyjam.cli:run"
