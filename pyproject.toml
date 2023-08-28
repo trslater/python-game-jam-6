@@ -1,6 +1,7 @@
 [project]
 name = "pyjam"
 version = "0.1.0"
+dependencies = ["arcade"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
