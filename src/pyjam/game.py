@@ -12,11 +12,13 @@ class Game(arcade.Window):
         height *= pixel_size
 
         super().__init__(width, height, title,
-                         antialiasing=False, fullscreen=True)
+                         antialiasing=False, fullscreen=False)
 
         self.pixel_size = pixel_size
 
+        self.player_sprite = None
         self.scene = None
+        self.camera = None
 
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
@@ -28,6 +30,7 @@ class Game(arcade.Window):
         self.player_sprite = Player(self.pixel_size)
         self.player_sprite.center_x = self.width//2
         self.player_sprite.center_y = self.height//2
+        self.scene.add_sprite("Player", self.player_sprite)
 
         for i in range(10):
             wall = arcade.Sprite(
@@ -39,10 +42,10 @@ class Game(arcade.Window):
 
             self.scene.add_sprite("Walls", wall)
 
-        self.scene.add_sprite("Player", self.player_sprite)
-
         self.physics_engine = arcade.PhysicsEngineSimple(
             self.player_sprite, self.scene.get_sprite_list("Walls"))
+        
+        self.camera = arcade.Camera(self.width, self.height)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -68,15 +71,23 @@ class Game(arcade.Window):
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.player_sprite.change_x = 0
 
+    def center_camera_to_player(self):
+        screen_center_x = self.player_sprite.center_x - (self.camera.viewport_width / 2)
+        screen_center_y = self.player_sprite.center_y - (
+            self.camera.viewport_height / 2
+        )
+
+        self.camera.move_to((screen_center_x, screen_center_y))
+
     def on_update(self, delta_time):
         """Movement and game logic"""
 
-        # Move the player with the physics engine
         self.physics_engine.update()
+        self.center_camera_to_player()
 
     def on_draw(self):
         """Render the screen."""
 
         self.clear()
-        
+        self.camera.use()
         self.scene.draw(filter=NEAREST)
