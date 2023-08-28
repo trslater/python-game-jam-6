@@ -14,5 +14,5 @@ pyjam
 ## Building
 
 ```
-make build
+make
 ```
