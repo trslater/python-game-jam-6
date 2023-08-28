@@ -1,15 +1,11 @@
 import arcade
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SCREEN_TITLE = "Python Game Jam #6"
-
 
 class Game(arcade.Window):
-    def __init__(self):
+    def __init__(self, screen_width, screen_height, screen_title):
 
         # Call the parent class and set up the window
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        super().__init__(screen_width, screen_height, screen_title)
 
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
