@@ -8,6 +8,7 @@ def run():
     game = Game(
         config()["screen"]["width"],
         config()["screen"]["height"],
-        config()["screen"]["title"])
+        config()["screen"]["title"],
+        config()["screen"]["pixel_size"])
     game.setup()
     arcade.run()

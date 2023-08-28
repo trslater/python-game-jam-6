@@ -1,9 +1,11 @@
 import arcade
 
+from pyjam.config import config
+
 
 class Player(arcade.Sprite):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, pixel_size, *args, **kwargs) -> None:
         super().__init__(
             "assets/player.png",
-            scale=1, image_width=16, image_height=16,
+            scale=pixel_size, image_width=16, image_height=16,
             *args, **kwargs)
