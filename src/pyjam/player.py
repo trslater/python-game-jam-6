@@ -1,7 +1,5 @@
 import arcade
 
-from pyjam.config import config
-
 
 class Player(arcade.Sprite):
     def __init__(self, pixel_size, *args, **kwargs) -> None:
