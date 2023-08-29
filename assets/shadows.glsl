@@ -46,27 +46,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         lightAmount *= shadowAmount;
     }
 
-    // vec2 samplePoint = mix(normalizedFragCoord, normalizedLightCoord, 0);
-    // // Is there something there? If so, we'll assume we are in shadow
-    // float shadowAmount = terrain(samplePoint);
-    // // Multiply the light amount.
-    // // (Multiply in case we want to upgrade to soft shadows)
-    // lightAmount *= shadowAmount;
-
-    // samplePoint = mix(normalizedFragCoord, normalizedLightCoord, 0.25);
-    // // Is there something there? If so, we'll assume we are in shadow
-    // shadowAmount = terrain(samplePoint);
-    // // Multiply the light amount.
-    // // (Multiply in case we want to upgrade to soft shadows)
-    // lightAmount *= shadowAmount;
-
-    // samplePoint = mix(normalizedFragCoord, normalizedLightCoord, 0.5);
-    // // Is there something there? If so, we'll assume we are in shadow
-    // shadowAmount = terrain(samplePoint);
-    // // Multiply the light amount.
-    // // (Multiply in case we want to upgrade to soft shadows)
-    // lightAmount *= shadowAmount;
-
     // Find out how much light we have based on the distance to our light
     lightAmount *= 1.0 - smoothstep(0.0, lightSize, distanceToLight);
 
