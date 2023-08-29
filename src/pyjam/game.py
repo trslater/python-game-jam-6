@@ -1,6 +1,8 @@
+from pathlib import Path
 from random import randint
 
 import arcade
+from arcade.experimental import Shadertoy
 from arcade.gl import NEAREST
 
 from pyjam.player import Player
@@ -8,13 +10,16 @@ from pyjam.player import Player
 
 class Game(arcade.Window):
     def __init__(self, width, height, title, pixel_size):
-        width *= pixel_size
-        height *= pixel_size
+        scaled_width = int(pixel_size*width)
+        scaled_height = int(pixel_size*height)
 
-        super().__init__(width, height, title,
+        super().__init__(scaled_width, scaled_height, title,
                          antialiasing=False, fullscreen=False)
+        
+        arcade.set_background_color(arcade.color.WHITE)
 
         self.pixel_size = pixel_size
+        self.light_size = min(self.width, self.height)
 
         self.player_sprite = None
         self.scene = None
@@ -32,20 +37,44 @@ class Game(arcade.Window):
         self.player_sprite.center_y = self.height//2
         self.scene.add_sprite("Player", self.player_sprite)
 
-        for i in range(10):
-            wall = arcade.Sprite(
-                "assets/wall.png",
-                scale=self.pixel_size, image_width=16, image_height=16)
-            
-            wall.center_x = randint(0, self.width - 16)
-            wall.center_y = randint(0, self.height - 16)
+        for i in range(self.height//(16*self.pixel_size)):
+            for j in range(self.width//(16*self.pixel_size)):
+                if randint(0, 3) == 0:
+                    wall = arcade.Sprite(
+                        "assets/wall.png",
+                        scale=self.pixel_size, image_width=16, image_height=16)
+                    
+                    wall.center_x = j*16*self.pixel_size
+                    wall.center_y = i*16*self.pixel_size
 
-            self.scene.add_sprite("Walls", wall)
+                    self.scene.add_sprite("Walls", wall)
 
         self.physics_engine = arcade.PhysicsEngineSimple(
             self.player_sprite, self.scene.get_sprite_list("Walls"))
         
         self.camera = arcade.Camera(self.width, self.height)
+
+        self.shadertoy = None
+        self.channel0 = None
+        self.channel1 = None
+        self.load_shader()
+
+    def load_shader(self):
+        size = (2*self.width, 2*self.height)
+
+        # # Create the shader toy
+        self.shadertoy = Shadertoy.create_from_file(size, Path("assets/shadows.glsl"))
+
+        # Create the channels 0 and 1 frame buffers.
+        # Make the buffer the size of the window, with 4 channels (RGBA)
+        self.channel0 = self.shadertoy.ctx.framebuffer(
+            color_attachments=[self.shadertoy.ctx.texture(size, components=4)])
+        self.channel1 = self.shadertoy.ctx.framebuffer(
+            color_attachments=[self.shadertoy.ctx.texture(size, components=4)])
+
+        # Assign the frame buffers to the channels
+        self.shadertoy.channel_0 = self.channel0.color_attachments[0]
+        self.shadertoy.channel_1 = self.channel1.color_attachments[0]
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -88,6 +117,16 @@ class Game(arcade.Window):
     def on_draw(self):
         """Render the screen."""
 
-        self.clear()
         self.camera.use()
-        self.scene.draw(filter=NEAREST)
+
+        self.channel0.use()
+        self.channel0.clear()
+        self.scene.draw(["Walls"], filter=NEAREST)
+
+        self.use()
+        self.clear()
+        self.shadertoy.program['lightPosition'] = (self.width, self.height)
+        self.shadertoy.program['lightSize'] = self.light_size
+        self.shadertoy.render()
+        self.scene.draw(["Player"], filter=NEAREST)
+        self.scene.draw(["Walls"], filter=NEAREST)
