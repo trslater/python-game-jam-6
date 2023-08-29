@@ -1,3 +1,9 @@
+/*
+ * Ray Cast Shadow Shader
+ * 
+ * Based on this tutorial: https://api.arcade.academy/en/latest/tutorials/raycasting/index.html
+ */
+
 #define N 50.0
 
 // x, y position of the light
