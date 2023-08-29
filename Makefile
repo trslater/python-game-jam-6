@@ -2,9 +2,10 @@
 
 build:
 	pyinstaller scripts/run.py \
+		--add-data="assets:assets" \
+		--add-data="pyjam.toml:." \
         --onefile \
-        --name pyjam \
-		--windowed
+        --name pyjam
 
 clean:
 	rm -fr ./build
