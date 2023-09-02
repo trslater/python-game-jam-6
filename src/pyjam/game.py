@@ -16,7 +16,7 @@ class Game(arcade.Window):
         super().__init__(scaled_width, scaled_height, title,
                          antialiasing=False, fullscreen=False)
         
-        arcade.set_background_color(arcade.color.WHITE)
+        arcade.set_background_color(arcade.color.FELDGRAU)
 
         self.pixel_size = pixel_size
         self.light_size = min(self.width, self.height)
