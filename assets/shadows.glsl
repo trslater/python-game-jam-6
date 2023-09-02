@@ -4,28 +4,18 @@
  * Based on this tutorial: https://api.arcade.academy/en/latest/tutorials/raycasting/index.html
  */
 
-#define N 50.0
+#define N 50
 
 // x, y position of the light
 uniform vec2 lightPosition;
 // Size of light in pixels
 uniform float lightSize;
-
-float terrain(vec2 samplePoint)
-{
-    float samplePointAlpha = texture(iChannel0, samplePoint).a;
-    float sampleStepped = step(0.1, samplePointAlpha);
-    float returnValue = 1.0 - sampleStepped;
-
-    returnValue = mix(0.8, 1.0, returnValue);
-
-    return returnValue;
-}
+//uniform float pixelSize;
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     // Distance in pixels to the light
-    float distanceToLight = length(lightPosition - fragCoord);
+    float distanceToLight = distance(lightPosition, fragCoord);
 
     // Normalize the fragment coordinate from (0.0, 0.0) to (1.0, 1.0)
     vec2 normalizedFragCoord = fragCoord/iResolution.xy;
@@ -33,17 +23,21 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     // Start our mixing variable at 1.0
     float lightAmount = 1.0;
-    for(int i = 0; i < N; ++i)
+    for( int i = 0; i < N; ++i )
     {
         // A 0.0 - 1.0 ratio between where our current pixel is, and where the light is
-        float t = float(i) / N;
+        float t = i/float(N);
         // Grab a coordinate between where we are and the light
         vec2 samplePoint = mix(normalizedFragCoord, normalizedLightCoord, t);
+
         // Is there something there? If so, we'll assume we are in shadow
-	    float shadowAmount = terrain(samplePoint);
+        float shadowAmount = 1.0 - texture(iChannel0, samplePoint).a;
         // Multiply the light amount.
         // (Multiply in case we want to upgrade to soft shadows)
         lightAmount *= shadowAmount;
+
+        // Exit if already black
+        if( lightAmount < 0.1 ) break;
     }
 
     // Find out how much light we have based on the distance to our light
