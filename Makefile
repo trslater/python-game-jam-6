@@ -5,6 +5,7 @@ build:
 		--add-data="assets:assets" \
 		--add-data="pyjam.toml:." \
         --onefile \
+        --windowed \
         --name pyjam
 
 clean:
